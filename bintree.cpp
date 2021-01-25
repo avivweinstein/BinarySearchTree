@@ -3,19 +3,19 @@
 //constructor
 BinTree::BinTree(){
     root = nullptr; //We are making an empty tree, so we set the root to NULL to begin with.
-    //root->left = nullptr;
-    //root->right = nullptr;
 }
 
 // copy constructor
 BinTree::BinTree(const BinTree & tree){
-    makeEmpty();
+    //cout << "\n \n \ncopy constructor" << endl;
+    this->root = nullptr;
+    //cout << "this->root: " << this->root << endl;
+    //cout <<"tree.root: " << tree.root << endl;
     *this = tree;
 }
 
 //destructor, calls makeEmpty	
 BinTree::~BinTree(){
-    //cout << "I am the destructor" << endl;
     makeEmpty();
 }					
 
@@ -25,13 +25,13 @@ bool BinTree::isEmpty() const{
 
 bool BinTree::insert(NodeData* nodeData){ //Recursive function implementation
     if(root != nullptr){
-        //cout << "root in insert: " << this->root << endl;
-        //cout << "*nodeData in insert: " << *nodeData << endl;
+        // cout << "do we go here?" << endl;
         insertHelp(this->root, nodeData);
         return true;
     }
     else{
         //cout << "Root node being created" << endl;
+        // cout << "OR do we go here?" << endl;
         root = new Node;
         root->left = nullptr;
         root->right = nullptr;
@@ -42,11 +42,15 @@ bool BinTree::insert(NodeData* nodeData){ //Recursive function implementation
 }
 
 bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
-    /*cout << "entering insertHelp" << endl;
-    cout << "nodePointer:"<< nodePointer << endl;
-    cout << "*nodeData:"<< *nodeData << endl;
-    cout << "*nodePointer->data: " << *nodePointer->data << endl;*/
+    // cout << "entering insertHelp" << endl;
+    // cout << "nodePointer:"<< nodePointer << endl;
+    // cout << "*nodeData:"<< *nodeData << endl;
+    //cout << "*nodePointer->data: " << *nodePointer->data << endl; - DO NOT UNCOMMENT
+    //For some reason, trying to access *nodePointer->data kills us.
+    //cout << "Where are we dying?"<<  endl;
+    
     if(*nodeData < *nodePointer->data){
+        //cout << "if statement 1 kill us?"<<  endl;
         if(nodePointer->left != nullptr){
             //cout << "\nrecursive call of insertHelp" << endl;
             insertHelp(nodePointer->left, nodeData);
@@ -61,6 +65,7 @@ bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
         }   
     }
     else if(*nodeData > *nodePointer->data){
+        //cout << "if statement 2 kill us?"<<  endl;
         if(nodePointer->right != nullptr){
             //cout << "\nrecursive call of insertHelp" << endl;
             insertHelp(nodePointer->right, nodeData);
@@ -79,10 +84,12 @@ bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
         //cout << "No new node in tree is made.\n" << endl;
         return false;
     }
+    //cout << "do we just skip it all?" << endl;
     return true;
 }
 
 void BinTree::makeEmpty(){
+    //cout << " makeEmpty" << endl;
     //You make a tree empty by deleting all notes in a post-order traversal.
     postOrderDeleteNode(this->root); //I will call my postOrderDelete helper function
 }
@@ -100,14 +107,14 @@ void BinTree::postOrderDeleteNode(const Node *rootNode){
 }
 
 BinTree& BinTree::operator=(const BinTree & rhs){
-    
+    inorderHelperArray(nullptr, nullptr);
     if(this != &rhs){   //Checking for self assignment. If we are self-assigning, we skip this if staetment and return *this.
         //cout << "do we enter the operator=?" << endl;
-        if(this->root != nullptr){ //If the binary tree we are trying to assign is not empty, we destroy the binary tree.
+        /*if(this->root != nullptr){ //If the binary tree we are trying to assign is not empty, we destroy the binary tree.
             //cout << "is make empty called?" << endl;
             this->makeEmpty();
         }
-        else if(rhs.root == nullptr){ //The tree on the RHS is empty/does not exist.
+        else*/ if(rhs.root == nullptr){ //The tree on the RHS is empty/does not exist.
             //cout << "second if statement" << endl;
             this->root = nullptr;
         }
@@ -130,12 +137,90 @@ void BinTree::preorderTraversal(Node* node){
     }
     //cout << "*node->data: " << *node->data << endl;
     insert(node->data);
+    //cout << "made it past insert?" << endl;
     preorderTraversal(node->left);
     preorderTraversal(node->right);
 }
 
-//bool BinTree::operator==(const BinTree &) const;
-// bool BinTree::operator!=(const BinTree &) const
+bool BinTree::operator==(const BinTree &rightSide) const{
+    //cout << "Entered operator==" << endl;
+    NodeData* lhs[100];
+    NodeData* rhs[100];
+
+    for(int i=0;i<100;i++){
+        lhs[i] = nullptr;
+        rhs[i] = nullptr;
+    }
+
+    //cout << "have we initialized our arrays?" << endl;
+
+    inorderHelperArray(lhs, this->root);
+		// int q=0;
+		// do{
+		// 	cout << "lhs[" << q << "]: " << *lhs[q] << endl;
+		// 	q++;
+		// } while(lhs[q] != nullptr);
+    inorderHelperArray(nullptr, nullptr);
+        //cout << "\n\n\n\n\n\n" << endl;
+    inorderHelperArray(rhs, rightSide.root);
+
+    //cout << "rhs[0]: " << *rhs[0] << endl;
+
+    // cout << "And have we gotten past our arrayhellper?" << endl;
+    // cout << "If so, lets show the contents of each array" << endl;
+		/*int i=0;
+		do{
+			cout << "lhs[" << i << "]: " << *lhs[i] << endl;
+            //cout << "is it the first value in rhs?" << endl;
+            cout << "rhs[" << i << "]: " << *rhs[i] << endl;
+            cout << "" << endl;
+			//cout << "it would appear so" << endl;
+            i++;
+		} while(lhs[i] != nullptr || rhs[i] != nullptr);*/
+
+
+    int lengthLHS = 0;
+    int lengthRHS = 0;
+
+    // cout << "lengthLHS: " << lengthLHS << endl;
+    // cout << "lengthRHS: " << lengthRHS << endl;
+
+    while(lhs[lengthLHS] != nullptr){
+       lengthLHS++;
+    }
+    
+    while(rhs[lengthRHS] != nullptr){
+       lengthRHS++;
+    }
+
+    // cout << "lengthLHS: " << lengthLHS << endl;
+    // cout << "lengthRHS: " << lengthRHS << endl;
+
+    if(lengthLHS != lengthRHS){
+        return false;
+    }
+
+    for(int j=0;j<lengthLHS;j++){
+        if(lhs[j] != rhs[j]){
+            return false;
+        }
+    }
+
+    inorderHelperArray(nullptr, nullptr);
+    
+    return true;
+    
+}
+
+
+bool BinTree::operator!=(const BinTree &rhs) const{
+    if(*this==rhs){
+        return false;
+    }
+    else{
+        return true;
+    }
+}
 
 
 bool BinTree::retrieve(const NodeData &nodeData, NodeData* &pointerToNodeData) const{
@@ -240,12 +325,36 @@ void BinTree::bstreeToArray(NodeData* a[]){
 }
 
 void BinTree::inorderHelperArray(NodeData* a[], Node *startNode) const{
-    int i = 0;
-    inorderHelperArray(a, startNode->left);
-    a[i] = 
-
-
+    //cout << "inorderHelperArray" << endl;
+    static int i = 0;
+    
+    if(startNode != nullptr){
+        //cout << "do we enter this is statemenet in inorderHelperArray?" << endl;
+        inorderHelperArray(a, startNode->left);
+        //cout << "i: " << i << endl;
+        a[i++] = startNode->data;
+        inorderHelperArray(a, startNode->right);
+    }
+    else{
+        if(a==nullptr){
+            i = 0;
+        }
+    }
+    //cout << "do we hit the end of inorderhelperarray?" << endl;
 }
+
+/*void BinTree::inorderHelperArray(NodeData* a[], Node *startNode, int index) const{
+    cout << "inorderHelperArray" << endl;
+    
+    if(startNode != nullptr){
+        cout << "do we enter this is statemenet in inorderHelperArray?" << endl;
+        inorderHelperArray(a, startNode->left, index+1);
+        cout << "index: " << index << endl;
+        a[index] = startNode->data;
+        inorderHelperArray(a, startNode->right,index+1);
+    }
+    cout << "do we hit the end of inorderhelperarray?" << endl;
+}*/
 
 
 

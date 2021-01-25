@@ -79,16 +79,38 @@ int main() {
 
 
 		// test ==, and != 
-		/*T2 = T;
+		 T2 = T;
+		 cout << "T2: " << T2 << endl;
+		 cout << "T: " << T << endl;
 		cout << "T == T2?     " << (T == T2 ? "equal" : "not equal") << endl;
 		cout << "T != first?  " << (T != first ? "not equal" : "equal") << endl;
 		cout << "T == dup?    " << (T == dup ? "equal" : "not equal") << endl;
-		dup = T;*/
+		dup = T;
 
 		// somewhat test bstreeToArray and arrayToBSTree
 		T.bstreeToArray(ndArray);
+		// cout << "ndArray[0]: " << *ndArray[0] << endl;
+		// cout << "ndArray[1]: " << *ndArray[1] << endl;
+		// cout << "ndArray[2]: " << *ndArray[2] << endl;
+		// cout << "ndArray[3]: " << *ndArray[3] << endl;
+		// cout << "ndArray[4]: " << *ndArray[4] << endl;
+		// cout << "ndArray[5]: " << *ndArray[5] << endl;
+		// cout << "ndArray[6]: " << *ndArray[6] << endl;
+		// cout << "ndArray[7]: " << *ndArray[7] << endl;
+		// cout << "ndArray[8]: " << *ndArray[8] << endl;
+		// cout << "ndArray[9]: " << *ndArray[9] << endl;
+		// cout << "ndArray[10]: " << *ndArray[10] << endl;
+		// cout << "ndArray[11]: " << *ndArray[11] << endl;
+		// cout << "ndArray[12]: " << *ndArray[12] << endl;
+		// cout << "ndArray[13]: " << *ndArray[13] << endl;
+		// int i=0;
+		// do{
+		// 	cout << "ndArray[" << i << "]: " << *ndArray[i] << endl;
+		// 	i++;
+		// } while(ndArray[i] != nullptr);
+
 		//T.arrayToBSTree(ndArray);
-		//T.displaySideways();
+		T.displaySideways();
 
 		T.makeEmpty();                  // empty out the tree
 		initArray(ndArray);             // empty out the array
