@@ -55,6 +55,7 @@ class BinTree{			// you add class/method comments and assumptions
         Node* retrieveHelper(Node *root, const NodeData &nodeData) const;
         int getHeightUtil(Node *node)const;
         void preorderTraversal(Node* node);
+        void convert(NodeData* a[], int start, int end, Node *root);
 };
 
 #endif

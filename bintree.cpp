@@ -23,13 +23,37 @@ bool BinTree::isEmpty() const{
     return (this->root == nullptr);
 }
 
+void BinTree::convert(NodeData* a[], int start, int end, Node *root){
+    static int skip = 0;
+    //cout << "skip: " << skip << endl;
+    
+    if(start > end){ //This is the base case for our recursive function. Once we have the start/end pointers change position, we know we have indexed our entire array 
+        return;
+    }
+
+    int mid = (start+end)/2;
+
+    if(skip != 0){
+        // cout << "inserting this value---> a[mid]" << endl;
+        // cout << "a[" << mid << "]: " << *a[mid] << endl;
+        insert(a[mid]);
+        convert(a,start,mid-1,this->root);
+        convert(a,mid+1,end,this->root);
+    }
+    else{ //Because of the way I have created my insert function, I need to skip a run of the convert function.
+        skip++;
+        convert(a,start,end,this->root);
+    }
+
+}
+
 bool BinTree::insert(NodeData* nodeData){ //Recursive function implementation
-    if(root != nullptr){
-        // cout << "do we go here?" << endl;
+    if(root != nullptr){ //if the root of the tree is not NULL, meaning that the BST object exists, we call our insertHelp function.
+        //cout << "do we go here?" << endl;
         insertHelp(this->root, nodeData);
         return true;
     }
-    else{
+    else{ //If there is no root node created in our tree, we create a root node.
         //cout << "Root node being created" << endl;
         // cout << "OR do we go here?" << endl;
         root = new Node;
@@ -49,13 +73,13 @@ bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
     //For some reason, trying to access *nodePointer->data kills us.
     //cout << "Where are we dying?"<<  endl;
     
-    if(*nodeData < *nodePointer->data){
+    if(*nodeData < *nodePointer->data){ //Here we are deciding if we need to traverse left or not.
         //cout << "if statement 1 kill us?"<<  endl;
-        if(nodePointer->left != nullptr){
+        if(nodePointer->left != nullptr){ //If there is a node to the left, we call insertHelper again but on this node to the left.
             //cout << "\nrecursive call of insertHelp" << endl;
             insertHelp(nodePointer->left, nodeData);
         }
-        else{
+        else{ //if there is no node the left, and we need to go left, we create a new left node.
             //cout << "\nLeft node being created" << endl;
             nodePointer->left = new Node;
             nodePointer->left->left = nullptr;
@@ -110,11 +134,12 @@ BinTree& BinTree::operator=(const BinTree & rhs){
     inorderHelperArray(nullptr, nullptr);
     if(this != &rhs){   //Checking for self assignment. If we are self-assigning, we skip this if staetment and return *this.
         //cout << "do we enter the operator=?" << endl;
-        /*if(this->root != nullptr){ //If the binary tree we are trying to assign is not empty, we destroy the binary tree.
+        if(this->root != nullptr){ //If the binary tree we are trying to assign is not empty, we destroy the binary tree.
             //cout << "is make empty called?" << endl;
             this->makeEmpty();
         }
-        else*/ if(rhs.root == nullptr){ //The tree on the RHS is empty/does not exist.
+
+        if(rhs.root == nullptr){ //The tree on the RHS is empty/does not exist.
             //cout << "second if statement" << endl;
             this->root = nullptr;
         }
@@ -309,7 +334,7 @@ int BinTree::getHeightUtil(Node *node)const{
 void BinTree::inorderHelper(Node *startNode) const{
     if (startNode != nullptr){
         inorderHelper(startNode->left);
-        cout << *startNode->data;
+        cout << *startNode->data << " ";
         inorderHelper(startNode->right);
     }
 }
@@ -343,29 +368,58 @@ void BinTree::inorderHelperArray(NodeData* a[], Node *startNode) const{
     //cout << "do we hit the end of inorderhelperarray?" << endl;
 }
 
-/*void BinTree::inorderHelperArray(NodeData* a[], Node *startNode, int index) const{
-    cout << "inorderHelperArray" << endl;
+
+
+
+// This function builds a balanced Binary Tree! Not necessarily a BST?
+// What I want to do in this function, is first find the legnth of my array (a[]).
+// The node(s) to be added are always at (low+high)/2 of the array.
+void BinTree::arrayToBSTree(NodeData* a[]){
+    //cout << "-------------------------------arrayToBSTree Function--------------------------" << endl;
+    this->makeEmpty(); //First thing I want to do is clear the BinTree object we are working with
     
-    if(startNode != nullptr){
-        cout << "do we enter this is statemenet in inorderHelperArray?" << endl;
-        inorderHelperArray(a, startNode->left, index+1);
-        cout << "index: " << index << endl;
-        a[index] = startNode->data;
-        inorderHelperArray(a, startNode->right,index+1);
+    if(a[0]==nullptr){ //Checking if we have an empty array or not.
+        return;
     }
-    cout << "do we hit the end of inorderhelperarray?" << endl;
-}*/
+
+    int i=0;
+    int end = 0;
+    int start = 0;
+    
+
+    while(a[i]!=nullptr){
+        end++;
+        i++;
+    }
+    //cout << "end: " << end << endl;
+    end = end-1;
+    //cout << "corrected end: " << end << endl;
+
+    int mid = (start + end)/2;
+    insert(a[mid]); //Here we are creating a new BST with the root node being the middle point of the array.
+    //cout << "here we call convert" << endl;
+    convert(a,start,end,this->root);
+
+    for(int j=0;j<end+1;j++){
+        //cout << "a[" << j << "]: " << *a[j] << endl;
+        a[j] = nullptr; //Setting the initial array we used to have all values of nullptr, as assignment 2 instructions ask for.
+    }
+
+    /*for(int j=0;j<end+1;j++){
+        cout << "a[" << j << "]: " << *a[j] << endl;
+    }*/
+
+
+    //cout << "-------------------------------end of arrayToBSTree Function--------------------------" << endl;
+
+    return;
+}
 
 
 
 
-/*void BinTree::arrayToBSTree(NodeData* a[]){
-//This function builds a balanced Binary Tree! Not necessarily a BST?
-//What I want to do in this function, is first find the legnth of my array (a[]).
-//Root is located at (low+high)/2 of the array.
 
 
-}*/
 
 //------------------------- displaySideways ---------------------------------
 // Displays a binary tree as though you are viewing it from the side;
