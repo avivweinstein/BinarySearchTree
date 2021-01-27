@@ -43,8 +43,9 @@ bool BinTree::isEmpty() const{
     return (this->root == nullptr);
 }
 
-// ---------------------------------inorderHelper--------------------------------------------------
-// Description: Traverses a BST using an in-order traversal pattern. Prints out the NodeData at every node it touches using in-order traversal
+// ---------------------------------convert--------------------------------------------------
+// Description: This is a helper function for the arrayToBSTree function. This functions helps in identifying
+//              which of the indexes in the array need to be added to the BST next.
 // ---------------------------------------------------------------------------------------------------
 void BinTree::convert(NodeData* a[], int start, int end, Node *root){
     static int skip = 0;
@@ -53,11 +54,11 @@ void BinTree::convert(NodeData* a[], int start, int end, Node *root){
         return;
     }
 
-    int mid = (start+end)/2;
+    int mid = (start+end)/2; //mid will be the index of the array we add as the next node in the BST.
 
     if(skip != 0){
         insert(a[mid]);
-        convert(a,start,mid-1,this->root);
+        convert(a,start,mid-1,this->root); //Recursively calculating the correect indexes to add to the BST.
         convert(a,mid+1,end,this->root);
     }
     else{ //Because of the way I have created my insert function, I need to skip a run of the convert function.
@@ -71,7 +72,7 @@ void BinTree::convert(NodeData* a[], int start, int end, Node *root){
 // Description: This function inserts a new Node into the current BinTree object. You need to pass in the NodeData that you want to add to the BinTree.
 //              This function makes use of the insertHelp function, which is a private function that helps to recursively add a node to the BinTree.
 // ---------------------------------------------------------------------------------------------------
-bool BinTree::insert(NodeData* nodeData){ //Recursive function implementation
+bool BinTree::insert(NodeData* nodeData){
     if(root != nullptr){ //if the root of the tree is not NULL, meaning that the BST object exists, we call our insertHelp function.
         insertHelp(this->root, nodeData);
         return true;
@@ -101,12 +102,12 @@ bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
             nodePointer->left->data = nodeData;
             return true;
         }   
-    }
-    else if(*nodeData > *nodePointer->data){
-        if(nodePointer->right != nullptr){
+    } 
+    else if(*nodeData > *nodePointer->data){//Here we are deciding if we need to traverse right or not.
+        if(nodePointer->right != nullptr){ //if there is no node the right, and we need to go left, we create a new left node.
             insertHelp(nodePointer->right, nodeData);
         }
-        else{
+        else{ //if there is no node the right, and we need to go right, we create a new right node.
             nodePointer->right = new Node;
             nodePointer->right->left = nullptr;
             nodePointer->right->right = nullptr;
@@ -114,7 +115,7 @@ bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
             return true;
         }
     }
-    else{
+    else{ //catch all case. If something goes wrong, return false.
         return false;
     }
     return true;
@@ -128,7 +129,7 @@ bool BinTree::insertHelp(Node *nodePointer, NodeData* nodeData){
 // ---------------------------------------------------------------------------------------------------
 void BinTree::makeEmpty(){
     //You make a tree empty by deleting all notes in a post-order traversal.
-    postOrderDeleteNode(this->root); //I will call my private postOrderDelete helper function
+    postOrderDeleteNode(this->root); //I will call my private postOrderDelete helper function. I broke things up this way to make the code cleaner.
 }
 
 // ---------------------------------postOrderDeleteNode--------------------------------------------------
@@ -143,7 +144,7 @@ void BinTree::postOrderDeleteNode(const Node *rootNode){
         postOrderDeleteNode(rootNode->left); //First we delete the left side of the tree
         postOrderDeleteNode(rootNode->right); //Then we delete the right side of the tree.
         delete rootNode; //We finally delete the root of the entire BST.
-        this->root = nullptr;
+        this->root = nullptr; 
     }
 }
 
@@ -175,7 +176,7 @@ void BinTree::preorderTraversal(Node* node){
     if(node==nullptr){ //base case for the recursive function.
         return;
     }
-    insert(node->data);
+    insert(node->data); //Here we are recursively insering nodes into the BST on the LHS of the operator=.
     preorderTraversal(node->left);
     preorderTraversal(node->right);
 }
@@ -339,7 +340,7 @@ int BinTree::getHeightUtil(Node *node)const{
         return 0;
     }
     
-    //These recursive calls calculate the heigh on both sides of the node.
+    //These recursive calls calculate the height on both sides of the node.
     int leftHeight = getHeightUtil(node->left);
     int rightHeigh = getHeightUtil(node->right);
 
@@ -355,15 +356,15 @@ int BinTree::getHeightUtil(Node *node)const{
 // Description: Traverses a BST using an in-order traversal pattern. Prints out the NodeData at every node it touches using in-order traversal
 // ---------------------------------------------------------------------------------------------------
 void BinTree::inorderHelper(Node *startNode) const{
-    if (startNode != nullptr){
-        inorderHelper(startNode->left);
+    if (startNode != nullptr){ //Here we recursively traverse the BST.
+        inorderHelper(startNode->left); 
         cout << *startNode->data << " ";
         inorderHelper(startNode->right);
     }
 }
 
 // ---------------------------------operator<<--------------------------------------------------
-// Description: Prints out a BST's nodes in in-order traversal.
+// Description: Prints out a BST's nodes in in-order traversal. Uses a helper function called inorderHelper
 // ---------------------------------------------------------------------------------------------------
 ostream& operator<<(ostream& out, const BinTree& T){
     T.inorderHelper(T.root);
@@ -380,10 +381,10 @@ void BinTree::bstreeToArray(NodeData* a[]){
 }
 
 // ---------------------------------retrieveHelper--------------------------------------------------
-// Description: A helper function for the retrieve function.
+// Description: A helper function for the retrieve function. Converts a BST into an array by traversing it in order.
 // ---------------------------------------------------------------------------------------------------
 void BinTree::inorderHelperArray(NodeData* a[], Node *startNode) const{
-    static int i = 0;
+    static int i = 0; //This variable is used to index the array we are creating.
     
     if(startNode != nullptr){
         inorderHelperArray(a, startNode->left);
@@ -391,7 +392,7 @@ void BinTree::inorderHelperArray(NodeData* a[], Node *startNode) const{
         inorderHelperArray(a, startNode->right);
     }
     else{
-        if(a==nullptr){
+        if(a==nullptr){ //Sometimes, I need to call inorderHelperArray with both paramaters set to nullptr to reset my static int i back to 0;
             i = 0;
         }
     }
@@ -407,12 +408,12 @@ void BinTree::arrayToBSTree(NodeData* a[]){
     if(a[0]==nullptr){ //Checking if we have an empty array or not.
         return;
     }
-
+    //Initializing variables that are used to measure the length of the array he have to convert to a BST.
     int i=0;
     int end = 0;
     int start = 0;
     
-
+    //Calculaing length of the array in this while loop.
     while(a[i]!=nullptr){
         end++;
         i++;
